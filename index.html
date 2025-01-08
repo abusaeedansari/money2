@@ -1,0 +1,1220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Money Master Challenge 2</title>
+  <link rel="icon" type="image/png" href="rupee.png"> 
+  <link rel="shortcut icon" href="rupee.png" type="image/png">
+  
+  <!-- Google Fonts: Open Sans and Poppins -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+  
+  <style>
+    /* Reset and Base Styles */
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Open Sans', sans-serif;
+      background: #F0F4F8; /* Soft Light Blue */
+      color: #333;
+      margin: 0;
+      padding: 0;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    header {
+      background: #4A90E2; /* Soft Blue */
+      color: #FFFFFF;
+      padding: 20px;
+      text-align: center;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    }
+
+    header h1 {
+      margin: 0;
+      font-size: 3em;
+      font-family: 'Poppins', sans-serif;
+      letter-spacing: 2px;
+    }
+
+    .container {
+      max-width: 1200px;
+      width: 90%;
+      margin: 40px auto;
+      background: #FFFFFF;
+      border-radius: 20px;
+      box-shadow: 0 8px 30px rgba(0,0,0,0.1);
+      overflow: hidden;
+      padding: 40px;
+      margin-bottom: 60px;
+      transition: all 0.3s ease;
+    }
+
+    .intro, .game-area, .result-area { display: none; }
+    .active { display: block; }
+
+    .intro h2 {
+      font-family: 'Poppins', sans-serif;
+      font-size: 2.5em;
+      text-align: center;
+      margin-bottom: 25px;
+      color: #4A90E2;
+    }
+
+    .intro p {
+      font-size: 1.2em;
+      text-align: center;
+      line-height: 1.8em;
+      color: #555;
+      margin-bottom: 25px;
+    }
+
+    .input-group {
+      margin: 25px 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 20px;
+    }
+
+    .input-group input, .input-group select {
+      padding: 14px;
+      width: 90%;
+      max-width: 400px;
+      box-sizing: border-box;
+      border: 1px solid #ccc;
+      border-radius: 10px;
+      font-size: 1.1em;
+      background: #F9F9F9;
+      color: #333;
+      transition: border 0.3s ease;
+    }
+
+    .input-group input:focus, .input-group select:focus {
+      border-color: #4A90E2;
+      outline: none;
+    }
+
+    .button {
+      background: #4A90E2; /* Soft Blue */
+      color: #FFFFFF;
+      padding: 16px 32px;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      font-size: 1.2em;
+      margin: 15px 0;
+      display: inline-block;
+      font-family: 'Poppins', sans-serif;
+      transition: background 0.3s ease, transform 0.2s;
+      text-align: center;
+      box-shadow: 0 6px 12px rgba(0,0,0,0.1);
+    }
+
+    .button:hover {
+      background: #357ABD; /* Darker Blue */
+      transform: scale(1.05);
+    }
+
+    .question-count {
+      font-weight: bold;
+      margin-bottom: 15px;
+      font-size: 1.5em;
+      text-align: center;
+      font-family: 'Poppins', sans-serif;
+      color: #4A90E2;
+    }
+
+    .question-text {
+      margin-bottom: 25px;
+      font-size: 1.6em;
+      text-align: center;
+      font-weight: 600;
+      font-family: 'Open Sans', sans-serif;
+      color: #333;
+    }
+
+    .feedback {
+      font-size: 1.2em;
+      margin-bottom: 20px;
+      padding: 15px;
+      border-radius: 10px;
+      text-align: center;
+      font-weight: bold;
+      margin-top: 15px;
+      transition: background 0.3s ease;
+    }
+
+    .feedback.correct {
+      background: #D4EDDA; /* Light Green */
+      color: #155724;
+      border: 1px solid #C3E6CB;
+    }
+
+    .feedback.incorrect {
+      background: #F8D7DA; /* Light Red */
+      color: #721C24;
+      border: 1px solid #F5C6CB;
+    }
+
+    .explanation {
+      font-size: 1.1em;
+      margin-bottom: 20px;
+      text-align: center;
+      font-style: italic;
+      color: #555;
+      font-family: 'Open Sans', sans-serif;
+    }
+
+    .scoreboard, .timer {
+      font-size: 1.2em;
+      font-family: 'Poppins', sans-serif;
+      font-weight: bold;
+      color: #4A90E2;
+      text-align: center;
+      margin-bottom: 25px;
+    }
+
+    .money-input {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 25px;
+      margin-bottom: 25px;
+      flex-direction: row;
+    }
+
+    .money-section {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      width: 180px;
+    }
+
+    .money-section h3 {
+      font-family: 'Poppins', sans-serif;
+      margin-bottom: 12px;
+      font-size: 1.1em;
+      color: #4A90E2;
+    }
+
+    .money-section input {
+      width: 100px;
+      padding: 10px;
+      font-size: 1.1em;
+      text-align: center;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      background: #F9F9F9;
+      color: #333;
+      transition: border 0.3s ease;
+    }
+
+    .money-section input:focus {
+      border-color: #4A90E2;
+      outline: none;
+    }
+
+    .answer-input {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin-top: 20px;
+    }
+
+    .answer-input input {
+      width: 220px;
+      padding: 12px;
+      font-size: 1.1em;
+      border: 1px solid #ccc;
+      border-radius: 10px;
+      font-family: 'Open Sans', sans-serif;
+      background: #F9F9F9;
+      color: #333;
+      transition: border 0.3s ease;
+    }
+
+    .answer-input input:focus {
+      border-color: #4A90E2;
+      outline: none;
+    }
+
+    .options {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 15px;
+      margin-top: 20px;
+    }
+
+    .option-label {
+      font-size: 1.1em;
+      cursor: pointer;
+      user-select: none;
+      font-family: 'Poppins', sans-serif;
+      color: #333;
+      display: flex;
+      align-items: center;
+      padding: 12px 20px;
+      border: 1px solid #ccc;
+      border-radius: 10px;
+      background: #F0F4F8; /* Soft Light Blue */
+      width: 100%;
+      max-width: 350px;
+      transition: background 0.3s ease, border-color 0.3s ease;
+    }
+
+    .option-label:hover {
+      background: #E0E7FF; /* Lighter Blue */
+      border-color: #4A90E2;
+    }
+
+    .option-label input {
+      margin-right: 15px;
+      transform: scale(1.3);
+      cursor: pointer;
+      accent-color: #4A90E2;
+    }
+
+    .drag-container {
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+      flex-wrap: wrap;
+      margin-top: 20px;
+    }
+
+    .drag-item {
+      width: 70px;
+      height: 70px;
+      background: #4A90E2; /* Soft Blue */
+      border: 2px solid #357ABD; /* Darker Blue */
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.3em;
+      cursor: grab;
+      font-family: 'Poppins', sans-serif;
+      color: #FFFFFF;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    .drag-item:active {
+      transform: scale(0.95);
+      box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    }
+
+    .drop-zone {
+      width: 350px;
+      height: 100px;
+      border: 2px dashed #357ABD; /* Darker Blue */
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-top: 25px;
+      background: #DCEEF8; /* Light Blue */
+      color: #333;
+      font-family: 'Poppins', sans-serif;
+      font-size: 1.2em;
+      transition: background 0.3s ease, border-color 0.3s ease;
+    }
+
+    .drop-zone.drag-over {
+      background: #AED6F1; /* Even Lighter Blue */
+      border-color: #4A90E2;
+    }
+
+    footer {
+      text-align: center;
+      color: #777;
+      margin: 25px 0;
+      font-size: 1.1em;
+      font-family: 'Open Sans', sans-serif;
+    }
+
+    footer a{
+      color: #4A90E2;
+      text-decoration: none;
+      font-size: 1.1em;
+      font-family: 'Open Sans', sans-serif;
+    }
+
+    /* Scrollbar Styling */
+    ::-webkit-scrollbar {
+      width: 10px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: #F0F4F8; /* Soft Light Blue */
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: #ccc;
+      border-radius: 5px;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+      background: #999;
+    }
+
+    /* Media Queries for Responsiveness */
+    @media (max-width: 1024px) {
+      .container {
+        max-width: 1000px;
+        padding: 35px;
+      }
+
+      .drag-item {
+        width: 65px;
+        height: 65px;
+        font-size: 1.2em;
+      }
+
+      .drop-zone {
+        width: 300px;
+        height: 90px;
+        font-size: 1.1em;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .container {
+        max-width: 90%;
+        padding: 30px;
+      }
+
+      .question-text {
+        font-size: 1.4em;
+      }
+
+      .money-section {
+        width: 150px;
+      }
+
+      .option-label {
+        max-width: 320px;
+      }
+
+      .drag-item {
+        width: 60px;
+        height: 60px;
+        font-size: 1.2em;
+      }
+
+      .drop-zone {
+        width: 280px;
+        height: 85px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .container {
+        max-width: 100%;
+        padding: 25px;
+      }
+
+      .question-text {
+        font-size: 1.3em;
+      }
+
+      .money-section {
+        width: 130px;
+      }
+
+      .option-label {
+        max-width: 280px;
+        padding: 10px 18px;
+      }
+
+      .drag-item {
+        width: 55px;
+        height: 55px;
+        font-size: 1.1em;
+      }
+
+      .drop-zone {
+        width: 90%;
+        height: 80px;
+        font-size: 1em;
+      }
+
+      .answer-input input {
+        width: 180px;
+      }
+    }
+  </style>
+  
+  <!-- Firebase SDKs -->
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-database-compat.js"></script>
+</head>
+<body>
+
+  <header>
+    <h1>Money Master Challenge 2</h1>
+  </header>
+
+  <div class="container">
+    <div class="intro active" id="intro">
+      <h2>Welcome!</h2>
+      <p>
+        In this challenge, you'll answer fun and challenging questions about Indian currency. You'll work with rupees and paise, combining coins and notes, and more.<br><br>
+        You have 25 minutes to complete all 100 questions. Good luck and have fun!
+      </p>
+      <div class="input-group">
+        <input type="text" id="playerName" placeholder="Your Name"/>
+        <select id="division">
+          <option value="" disabled selected>Select Division</option>
+          <option value="A">Division A</option>
+          <option value="B">Division B</option>
+        </select>
+        <input type="number" id="rollNo" placeholder="Enter Roll Number"/>
+      </div>
+      <button class="button" onclick="startGame()">Start</button>
+      <div id="infoMsg" class="info-msg" style="font-size:1em; margin-top:15px; color:#4A90E2; text-align:center; display:none;"></div>
+    </div>
+
+    <div class="game-area" id="game-area">
+      <div class="timer" id="timer">Time: 25:00</div>
+      <div class="scoreboard" id="scoreboard">Score: 0</div>
+      <div class="question-count" id="question-count"></div>
+      <div class="question-text" id="question-text"></div>
+      
+      <div id="money-input-area">
+        <!-- Dynamic Money Input Area -->
+      </div>
+
+      <div class="feedback" id="feedback" style="display:none;"></div>
+      <div class="explanation" id="explanation" style="display:none;"></div>
+      <button class="button" id="actionBtn" onclick="actionButtonClicked()">Check</button>
+    </div>
+
+    <div class="result-area" id="result-area">
+      <h2>Well Done!</h2>
+      <p id="final-message"></p>
+      <p id="final-score"></p>
+      <p>Thank you for playing! Keep practicing!</p>
+    </div>
+  </div>
+
+  <footer>
+    <p>All the best!</p>
+  </footer>
+
+  <script>
+    // Firebase configuration
+    const firebaseConfig = {
+      apiKey: "AIzaSyB-RDLOoTlaio0VgtFh7eencMr9ekdFEEk",
+      authDomain: "test-app-1-6ade5.firebaseapp.com",
+      databaseURL: "https://test-app-1-6ade5-default-rtdb.firebaseio.com",
+      projectId: "test-app-1-6ade5",
+      storageBucket: "test-app-1-6ade5.firebasestorage.app",
+      messagingSenderId: "938447574937",
+      appId: "1:938447574937:web:65c1c53a12c665988b2508",
+      measurementId: "G-FKNLFZH4G9"
+    };
+    // Initialize Firebase
+    firebase.initializeApp(firebaseConfig);
+    const database = firebase.database();
+
+    // Utility functions
+    function shuffleArray(array) {
+      for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+      }
+      return array;
+    }
+
+    function pad(num){return num<10 ? "0"+num : num;}
+    function randomInt(min,max){return Math.floor(Math.random()*(max-min+1))+min;}
+    function showInfo(msg){
+      const infoEl = document.getElementById("infoMsg");
+      infoEl.textContent = msg;
+      infoEl.style.display = "block";
+    }
+    function hideInfo(){
+      const infoEl = document.getElementById("infoMsg");
+      infoEl.textContent = "";
+      infoEl.style.display = "none";
+    }
+
+    // Configuration
+    let currentQuestionIndex = 0;
+    let score = 0;
+    let playerName = "";
+    let division = "";
+    let rollNo = "";
+    let totalTime = 25 * 60; // 25 minutes
+    let timerInterval = null;
+    let state = "check"; // "check" or "next"
+
+    // User Key for Firebase
+    let userKey = "";
+
+    // Current answer state
+    let selectedCoins = {};
+    let selectedNotes = {};
+
+    // Firebase Data Structure:
+    // results/{division}_{rollNo} : {
+    //   name: playerName,
+    //   division: division,
+    //   rollNo: rollNo,
+    //   score: 0,
+    //   questionsCompleted: 0,
+    //   quiz: "money2",
+    //   timeStarted: timestamp,
+    //   lastAnswered: timestamp,
+    //   totalQuestions: totalQuestions
+    // }
+
+    // Current question set
+    let questions = [];
+    let usedQuestions = new Set();
+
+    // Money denominations in India (excluding ₹2000 notes)
+    const coins = [ 2, 5, 10];
+    const notes = [10, 20, 50, 100, 500];
+
+    // Question Types
+    const QUESTION_TYPES = {
+      COMBINATION: 'combination',
+      SUBTRACTION: 'subtraction',
+      ADDITION: 'addition',
+      SCENARIO: 'scenario',
+      CONVERSION: 'conversion',
+      COMBINATION_COMPLEX: 'combinationComplex'
+    };
+
+    // Generate 100 Unique Questions
+    function generateQuestions(totalQuestions = 100) {
+      while(questions.length < totalQuestions){
+        let type = randomChoice(Object.values(QUESTION_TYPES));
+        let question = {};
+        let questionKey = "";
+        switch(type){
+          case QUESTION_TYPES.COMBINATION:
+            question = generateCombinationQuestion();
+            break;
+          case QUESTION_TYPES.SUBTRACTION:
+            question = generateSubtractionQuestion();
+            break;
+          case QUESTION_TYPES.ADDITION:
+            question = generateAdditionQuestion();
+            break;
+          case QUESTION_TYPES.SCENARIO:
+            question = generateScenarioQuestion();
+            break;
+          case QUESTION_TYPES.CONVERSION:
+            question = generateConversionQuestion();
+            break;
+          case QUESTION_TYPES.COMBINATION_COMPLEX:
+            question = generateCombinationComplexQuestion();
+            break;
+        }
+        if(question && !usedQuestions.has(question.key)){
+          questions.push(question);
+          usedQuestions.add(question.key);
+        }
+      }
+      shuffleArray(questions);
+    }
+
+    function randomChoice(arr) {
+      return arr[Math.floor(Math.random()*arr.length)];
+    }
+
+    function generateCombinationQuestion(){
+      let qType = randomChoice(['coins', 'notes']);
+      if(qType === 'coins'){
+        let coin = randomChoice(coins);
+        let target = coin * randomInt(5, 50);
+        let key = `combination_coins_${coin}_${target}`;
+        return {
+          key: key,
+          type: QUESTION_TYPES.COMBINATION,
+          subtype: 'coins',
+          denomination: coin,
+          target: target,
+          questionText: `How many ₹${coin} coins make ₹${target}?`,
+          correctAnswer: Math.floor(target / coin)
+        };
+      } else {
+        let note = randomChoice(notes);
+        let target = note * randomInt(5, 100);
+        let key = `combination_notes_${note}_${target}`;
+        return {
+          key: key,
+          type: QUESTION_TYPES.COMBINATION,
+          subtype: 'notes',
+          denomination: note,
+          target: target,
+          questionText: `How many ₹${note} notes make ₹${target}?`,
+          correctAnswer: Math.floor(target / note)
+        };
+      }
+    }
+
+    function generateSubtractionQuestion(){
+      let initial = randomInt(50, 500);
+      let subtract = randomInt(10, initial - 10); // Ensure positive result
+      let key = `subtraction_${initial}_${subtract}`;
+      return {
+        key: key,
+        type: QUESTION_TYPES.SUBTRACTION,
+        initial: initial,
+        subtract: subtract,
+        target: initial - subtract,
+        questionText: `If you have ₹${initial} and spend ₹${subtract}, how much will you have left?`,
+        correctAnswer: initial - subtract
+      };
+    }
+
+    function generateAdditionQuestion(){
+      let numAmounts = randomInt(3, 5); // Increase complexity
+      let amounts = [];
+      let total = 0;
+      for(let i = 0; i < numAmounts; i++){
+        let coinOrNote = Math.random() > 0.5 ? 'coin' : 'note';
+        let denomination = coinOrNote === 'coin' ? randomChoice(coins) : randomChoice(notes);
+        amounts.push(denomination);
+        total += denomination;
+      }
+      let key = `addition_${amounts.join('_')}`;
+      return {
+        key: key,
+        type: QUESTION_TYPES.ADDITION,
+        amounts: amounts,
+        total: total,
+        questionText: `What is the sum of ${amounts.join(' + ')}?`,
+        correctAnswer: total
+      };
+    }
+
+    function generateScenarioQuestion(){
+      const items = [
+        {name: 'milk bottle', cost: randomInt(20, 100)},
+        {name: 'cookie', cost: randomInt(5, 50)},
+        {name: 'toy', cost: randomInt(30, 200)},
+        {name: 'notebook', cost: randomInt(10, 80)},
+        {name: 'pen', cost: randomInt(2, 30)},
+        {name: 'chocolate', cost: randomInt(5, 60)},
+        {name: 'juice', cost: randomInt(15, 120)},
+        {name: 'eraser', cost: randomInt(1, 25)},
+        {name: 'pencil', cost: randomInt(2, 40)},
+        {name: 'marker', cost: randomInt(3, 50)}
+      ];
+      let item = randomChoice(items);
+      let paymentOption = randomChoice(['notes', 'coins']);
+      let denominationOptions = paymentOption === 'notes' ? [10, 20, 50, 100] : [1, 2, 5, 10];
+      let denomination = randomChoice(denominationOptions);
+      let required = Math.ceil(item.cost / denomination);
+      let totalPayment = required * denomination;
+      let key = `scenario_${item.name}_${item.cost}_${denomination}`;
+      return {
+        key: key,
+        type: QUESTION_TYPES.SCENARIO,
+        item: item.name,
+        cost: item.cost,
+        denomination: denomination,
+        required: required,
+        totalPayment: totalPayment,
+        questionText: `A ${item.name} costs ₹${item.cost}. You want to buy it using ₹${denomination}. How many ₹${denomination} notes or coins do you need?`,
+        correctAnswer: required
+      };
+    }
+
+    function generateConversionQuestion(){
+      let conversionType = randomChoice(['toPaise', 'toRupees']);
+      if(conversionType === 'toPaise'){
+        let rupees = randomInt(1, 100);
+        let paise = rupees * 100;
+        let key = `conversion_${rupees}_to_paise`;
+        return {
+          key: key,
+          type: QUESTION_TYPES.CONVERSION,
+          conversionType: 'toPaise',
+          rupees: rupees,
+          paise: paise,
+          questionText: `Convert ₹${rupees} into paise: ___ paise.`,
+          correctAnswer: paise
+        };
+      } else {
+        let paise = randomInt(100, 10000);
+        let rupees = Math.round(paise / 100 * 100) / 100; // Ensures two decimal places
+        let key = `conversion_${paise}_to_rupees`;
+        return {
+          key: key,
+          type: QUESTION_TYPES.CONVERSION,
+          conversionType: 'toRupees',
+          paise: paise,
+          rupees: rupees,
+          questionText: `Convert ${paise} paise into rupees: ___.`,
+          correctAnswer: rupees
+        };
+      }
+    }
+
+    function generateCombinationComplexQuestion(){
+      let target = randomInt(100, 1000); // Increase target for complexity
+      let combinations = [];
+      let remaining = target;
+      let attempts = 0;
+      while(remaining > 0 && attempts < 15){
+        let possible = notes.concat(coins).filter(d => d <= remaining);
+        if(possible.length === 0) break;
+        let denomination = randomChoice(possible);
+        combinations.push(denomination);
+        remaining -= denomination;
+        attempts++;
+      }
+      let key = `combinationComplex_${target}`;
+      return {
+        key: key,
+        type: QUESTION_TYPES.COMBINATION_COMPLEX,
+        target: target,
+        combinations: combinations,
+        questionText: `Create a combination of coins and notes to make ₹${target}.`,
+        correctAnswer: combinations.reduce((a,b)=>a+b, 0) // Total sum
+      };
+    }
+
+    // Initialize money input area
+    function createMoneyInputArea(question){
+      const moneyInputArea = document.getElementById("money-input-area");
+      moneyInputArea.innerHTML = "";
+
+      if(question.type === QUESTION_TYPES.COMBINATION || question.type === QUESTION_TYPES.COMBINATION_COMPLEX){
+        if(question.type === QUESTION_TYPES.COMBINATION){
+          const section = document.createElement("div");
+          section.className = "money-input";
+
+          if(question.subtype === 'coins'){
+            const coinSection = document.createElement("div");
+            coinSection.className = "money-section";
+            coinSection.innerHTML = `<h3>₹${question.denomination} Coins</h3>`;
+            
+            const inputBox = document.createElement("input");
+            inputBox.type = "number";
+            inputBox.min = "0";
+            inputBox.value = "0";
+            inputBox.placeholder="0";
+            inputBox.id = `coin-${question.denomination}-input`;
+            inputBox.oninput = (e) => {
+              let val = parseInt(e.target.value);
+              if(isNaN(val) || val < 0){
+                val = 0;
+              }
+              selectedCoins[question.denomination] = val;
+            };
+
+            coinSection.appendChild(inputBox);
+            section.appendChild(coinSection);
+          } else {
+            const noteSection = document.createElement("div");
+            noteSection.className = "money-section";
+            noteSection.innerHTML = `<h3>₹${question.denomination} Notes</h3>`;
+            
+            const inputBox = document.createElement("input");
+            inputBox.type = "number";
+            inputBox.min = "0";
+            inputBox.value = "0";
+            inputBox.placeholder="0";
+            inputBox.id = `note-${question.denomination}-input`;
+            inputBox.oninput = (e) => {
+              let val = parseInt(e.target.value);
+              if(isNaN(val) || val < 0){
+                val = 0;
+              }
+              selectedNotes[question.denomination] = val;
+            };
+
+            noteSection.appendChild(inputBox);
+            section.appendChild(noteSection);
+          }
+
+          moneyInputArea.appendChild(section);
+        } else if(question.type === QUESTION_TYPES.COMBINATION_COMPLEX){
+          const dragContainer = document.createElement("div");
+          dragContainer.className = "drag-container";
+
+          coins.concat(notes).forEach(denomination => {
+            const dragItem = document.createElement("div");
+            dragItem.className = "drag-item";
+            dragItem.draggable = true;
+            dragItem.textContent = `₹${denomination}`;
+            dragItem.dataset.value = denomination;
+            dragItem.addEventListener('dragstart', dragStart);
+            dragContainer.appendChild(dragItem);
+          });
+
+          const dropZone = document.createElement("div");
+          dropZone.className = "drop-zone";
+          dropZone.id = "drop-zone";
+          dropZone.textContent = `Drag here to create ₹${question.target}`;
+          dropZone.addEventListener('dragover', dragOver);
+          dropZone.addEventListener('drop', dropHandler);
+
+          moneyInputArea.appendChild(dragContainer);
+          moneyInputArea.appendChild(dropZone);
+
+          // Initialize dragged values
+          selectedCoins = {};
+          selectedNotes = {};
+        }
+      } else if(question.type === QUESTION_TYPES.SUBTRACTION){
+        // For subtraction, input the remaining amount
+        const inputGroup = document.createElement("div");
+        inputGroup.className = "answer-input";
+
+        const input = document.createElement("input");
+        input.type = "number";
+        input.id = "subtraction-answer";
+        input.placeholder = "Enter remaining";
+        input.min = "0";
+
+        inputGroup.appendChild(input);
+        moneyInputArea.appendChild(inputGroup);
+      } else if(question.type === QUESTION_TYPES.ADDITION){
+        const inputGroup = document.createElement("div");
+        inputGroup.className = "answer-input";
+
+        const input = document.createElement("input");
+        input.type = "number";
+        input.id = "addition-answer";
+        input.placeholder = "Enter total";
+        input.min = "0";
+
+        inputGroup.appendChild(input);
+        moneyInputArea.appendChild(inputGroup);
+      } else if(question.type === QUESTION_TYPES.SCENARIO){
+        const optionsDiv = document.createElement("div");
+        optionsDiv.className = "options";
+
+        let correctOption = question.correctAnswer;
+        let incorrectOptions = generateIncorrectOptions(correctOption, 4);
+        const options = shuffleArray([correctOption, ...incorrectOptions]);
+
+        options.forEach(option => {
+          const optionLabel = document.createElement("label");
+          optionLabel.className = "option-label";
+
+          const optionInput = document.createElement("input");
+          optionInput.type = "radio";
+          optionInput.name = "option";
+          optionInput.value = option;
+
+          optionLabel.appendChild(optionInput);
+          optionLabel.appendChild(document.createTextNode(option));
+          optionsDiv.appendChild(optionLabel);
+        });
+
+        moneyInputArea.appendChild(optionsDiv);
+      } else if(question.type === QUESTION_TYPES.CONVERSION){
+        const inputGroup = document.createElement("div");
+        inputGroup.className = "answer-input";
+
+        const input = document.createElement("input");
+        input.type = "number";
+        input.id = "conversion-answer";
+        input.placeholder = question.conversionType === 'toPaise' ? "Enter paise" : "Enter rupees";
+        input.min = "0";
+        input.step = "0.01"; // Allow two decimal places
+
+        inputGroup.appendChild(input);
+        moneyInputArea.appendChild(inputGroup);
+      }
+    }
+
+    function generateIncorrectOptions(correct, totalOptions){
+      const options = new Set();
+      while(options.size < totalOptions - 1){
+        let delta = randomInt(1, 10);
+        let option = randomInt(1, 1000);
+        if(Math.abs(option - correct) <= 20 && option !== correct){
+          options.add(option);
+        }
+      }
+      return Array.from(options);
+    }
+
+    function dragStart(event) {
+      event.dataTransfer.setData('text/plain', event.target.dataset.value);
+    }
+
+    function dragOver(event) {
+      event.preventDefault();
+      const dropZone = document.getElementById("drop-zone");
+      dropZone.classList.add("drag-over");
+    }
+
+    function dropHandler(event) {
+      event.preventDefault();
+      const dropZone = document.getElementById("drop-zone");
+      dropZone.classList.remove("drag-over");
+      const value = parseInt(event.dataTransfer.getData('text'));
+      if(!selectedCoins[value] && !selectedNotes[value]){
+        selectedCoins[value] = 0;
+        selectedNotes[value] = 0;
+      }
+      if(coins.includes(value)){
+        selectedCoins[value] = (selectedCoins[value] || 0) + 1;
+      } else {
+        selectedNotes[value] = (selectedNotes[value] || 0) + 1;
+      }
+      updateDropZone();
+    }
+
+    function updateDropZone(){
+      const dropZone = document.getElementById("drop-zone");
+      let total = 0;
+      for(let coin in selectedCoins){
+        total += parseInt(coin) * selectedCoins[coin];
+      }
+      for(let note in selectedNotes){
+        total += parseInt(note) * selectedNotes[note];
+      }
+      dropZone.textContent = `Total: ${total} / ${questions[currentQuestionIndex].target}`;
+    }
+
+    function startGame() {
+      hideInfo();
+      const nameInput = document.getElementById("playerName").value.trim();
+      const divisionVal = document.getElementById("division").value;
+      const rollNoVal = document.getElementById("rollNo").value.trim();
+
+      if(!nameInput){
+        showInfo("Please enter your name.");
+        return;
+      }
+      if(!divisionVal){
+        showInfo("Please select your division.");
+        return;
+      }
+      if(!rollNoVal){
+        showInfo("Please enter your roll number.");
+        return;
+      }
+
+      playerName = nameInput;
+      division = divisionVal;
+      rollNo = rollNoVal;
+      userKey = `${division}_${rollNo}`;
+
+      document.getElementById("intro").classList.remove("active");
+      document.getElementById("game-area").classList.add("active");
+      generateQuestions();
+      showQuestion();
+      startTimer();
+
+      // Initialize or reset user data in Firebase
+      const initialData = {
+        name: playerName,
+        division: division,
+        rollNo: rollNo,
+        score: 0,
+        questionsCompleted: 0,
+        quiz: "money2",
+        timeStarted: new Date().toISOString(),
+        lastAnswered: new Date().toISOString(),
+        totalQuestions: questions.length
+      };
+      database.ref(`results/${userKey}`).set(initialData);
+    }
+
+    function startTimer() {
+      const timerEl = document.getElementById("timer");
+      timerInterval = setInterval(()=>{
+        if(totalTime <= 0) {
+          clearInterval(timerInterval);
+          endGame();
+          return;
+        }
+        totalTime--;
+        let minutes = Math.floor(totalTime/60);
+        let seconds = totalTime%60;
+        if(seconds < 10) seconds = "0"+seconds;
+        timerEl.textContent = `Time: ${pad(minutes)}:${pad(seconds)}`;
+      },1000);
+    }
+
+    function showQuestion() {
+      let q = questions[currentQuestionIndex];
+      document.getElementById("question-count").textContent = `Question ${currentQuestionIndex + 1} of ${questions.length}`;
+      document.getElementById("question-text").textContent = q.questionText;
+
+      selectedCoins = {};
+      selectedNotes = {};
+      createMoneyInputArea(q);
+
+      let feedbackEl = document.getElementById("feedback");
+      let explanationEl = document.getElementById("explanation");
+      feedbackEl.style.display = "none";
+      explanationEl.style.display = "none";
+      feedbackEl.textContent = "";
+      explanationEl.textContent = "";
+
+      let actionBtn = document.getElementById("actionBtn");
+      actionBtn.textContent = "Check";
+      state = "check";
+    }
+
+    function actionButtonClicked() {
+      if(state==="check") {
+        checkAnswer();
+      } else {
+        nextQuestion();
+      }
+    }
+
+    function checkAnswer() {
+      let q = questions[currentQuestionIndex];
+      let correct = false;
+      let userAnswer = "";
+
+      try {
+        if(q.type === QUESTION_TYPES.COMBINATION){
+          if(q.subtype === 'coins'){
+            let count = parseInt(document.getElementById(`coin-${q.denomination}-input`).value.trim());
+            correct = (count === q.correctAnswer);
+            userAnswer = count;
+          } else {
+            let count = parseInt(document.getElementById(`note-${q.denomination}-input`).value.trim());
+            correct = (count === q.correctAnswer);
+            userAnswer = count;
+          }
+        } else if(q.type === QUESTION_TYPES.SUBTRACTION){
+          let answer = parseInt(document.getElementById("subtraction-answer").value.trim());
+          correct = (answer === q.correctAnswer);
+          userAnswer = answer;
+        } else if(q.type === QUESTION_TYPES.ADDITION){
+          let answer = parseInt(document.getElementById("addition-answer").value.trim());
+          correct = (answer === q.correctAnswer);
+          userAnswer = answer;
+        } else if(q.type === QUESTION_TYPES.SCENARIO){
+          let selectedOption = document.querySelector('input[name="option"]:checked');
+          if(selectedOption){
+            userAnswer = parseInt(selectedOption.value);
+            correct = (userAnswer === q.correctAnswer);
+          } else {
+            // No option selected
+            correct = false;
+          }
+        } else if(q.type === QUESTION_TYPES.CONVERSION){
+          let answer = parseFloat(document.getElementById("conversion-answer").value.trim());
+          if(q.conversionType === 'toPaise'){
+            correct = (answer === q.correctAnswer);
+            userAnswer = answer;
+          } else {
+            // Round both answers to two decimal places to avoid floating point issues
+            let roundedAnswer = Math.round(answer * 100) / 100;
+            let roundedCorrect = Math.round(q.correctAnswer * 100) / 100;
+            correct = (roundedAnswer === roundedCorrect);
+            userAnswer = roundedAnswer;
+          }
+        } else if(q.type === QUESTION_TYPES.COMBINATION_COMPLEX){
+          let total = 0;
+          for(let coin in selectedCoins){
+            total += parseInt(coin) * selectedCoins[coin];
+          }
+          for(let note in selectedNotes){
+            total += parseInt(note) * selectedNotes[note];
+          }
+          correct = (total === q.target);
+          userAnswer = total;
+        }
+      } catch (error) {
+        console.error("Error in checkAnswer:", error);
+        showInfo("An error occurred while checking the answer. Please try again.");
+        return;
+      }
+
+      let feedbackEl = document.getElementById("feedback");
+      let explanationEl = document.getElementById("explanation");
+      feedbackEl.style.display = "block";
+      explanationEl.style.display = "block";
+      feedbackEl.classList.remove("correct","incorrect");
+      explanationEl.style.marginTop = "10px";
+
+      if(correct) {
+        feedbackEl.textContent = "Correct!";
+        feedbackEl.classList.add("correct");
+        explanationEl.textContent = "Great job!";
+        score +=10;
+      } else {
+        feedbackEl.textContent = "Incorrect!";
+        feedbackEl.classList.add("incorrect");
+        if(q.type === QUESTION_TYPES.ADDITION){
+          explanationEl.textContent = `The correct total was: ${q.correctAnswer}.`;
+        } else if(q.type === QUESTION_TYPES.COMBINATION_COMPLEX){
+          explanationEl.textContent = `The correct total was: ${q.correctAnswer}.`;
+        } else if(q.type === QUESTION_TYPES.CONVERSION){
+          explanationEl.textContent = `The correct answer was: ${q.correctAnswer}.`;
+        } else if(q.type === QUESTION_TYPES.SUBTRACTION){
+          explanationEl.textContent = `The correct answer was: ${q.correctAnswer}.`;
+        } else if(q.type === QUESTION_TYPES.SCENARIO){
+          explanationEl.textContent = `The correct answer was: ${q.correctAnswer} ${q.denomination === 1 ? 'note' : 'notes'}.`;
+        }
+      }
+
+      document.getElementById("scoreboard").textContent = `Score: ${score}`;
+      let actionBtn = document.getElementById("actionBtn");
+      actionBtn.textContent = "Next";
+      state = "next";
+
+      // Update score and questionsCompleted in Firebase after each answer
+      const timestamp = new Date().toISOString();
+      const questionsCompleted = currentQuestionIndex + 1;
+      const updateData = {
+        score: score,
+        questionsCompleted: questionsCompleted,
+        lastAnswered: timestamp
+      };
+      database.ref(`results/${userKey}`).update(updateData);
+    }
+
+    function nextQuestion() {
+      currentQuestionIndex++;
+      if(currentQuestionIndex >= questions.length) {
+        endGame();
+      } else {
+        showQuestion();
+      }
+    }
+
+    function endGame() {
+      clearInterval(timerInterval);
+      document.getElementById("game-area").classList.remove("active");
+      document.getElementById("result-area").classList.add("active");
+      document.getElementById("final-message").textContent = `Excellent work, ${playerName}!`;
+      document.getElementById("final-score").textContent = `Your Score: ${score} out of ${questions.length * 10}`;
+
+      // Update final result in Firebase
+      const timestamp = new Date().toISOString();
+      const finalResultData = {
+        finalScore: score,
+        timeEnded: timestamp,
+        totalTime: 25 * 60 - totalTime,
+        questionsCompleted: questions.length
+      };
+      database.ref(`results/${userKey}`).update(finalResultData);
+    }
+
+    // Drag-and-Drop functions are already defined above to prevent duplication
+
+  </script>
+</body>
+</html>
