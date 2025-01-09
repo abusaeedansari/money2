@@ -589,12 +589,10 @@
     const coins = [ 1, 2, 5, 10];
     const notes = [10, 20, 50, 100, 500];
 
-    // Question Types
+    // Updated Question Types (Removed COMBINATION and SCENARIO)
     const QUESTION_TYPES = {
-      COMBINATION: 'combination',
       SUBTRACTION: 'subtraction',
       ADDITION: 'addition',
-      SCENARIO: 'scenario',
       CONVERSION: 'conversion',
       COMBINATION_COMPLEX: 'combinationComplex'
     };
@@ -606,17 +604,11 @@
         let question = {};
         let questionKey = "";
         switch(type){
-          case QUESTION_TYPES.COMBINATION:
-            question = generateCombinationQuestion();
-            break;
           case QUESTION_TYPES.SUBTRACTION:
             question = generateSubtractionQuestion();
             break;
           case QUESTION_TYPES.ADDITION:
             question = generateAdditionQuestion();
-            break;
-          case QUESTION_TYPES.SCENARIO:
-            question = generateScenarioQuestion();
             break;
           case QUESTION_TYPES.CONVERSION:
             question = generateConversionQuestion();
@@ -637,36 +629,7 @@
       return arr[Math.floor(Math.random()*arr.length)];
     }
 
-    function generateCombinationQuestion(){
-      let qType = randomChoice(['coins', 'notes']);
-      if(qType === 'coins'){
-        let coin = randomChoice(coins);
-        let target = coin * randomInt(5, 50);
-        let key = `combination_coins_${coin}_${target}`;
-        return {
-          key: key,
-          type: QUESTION_TYPES.COMBINATION,
-          subtype: 'coins',
-          denomination: coin,
-          target: target,
-          questionText: `How many ₹${coin} coins make ₹${target}?`,
-          correctAnswer: Math.floor(target / coin)
-        };
-      } else {
-        let note = randomChoice(notes);
-        let target = note * randomInt(5, 100);
-        let key = `combination_notes_${note}_${target}`;
-        return {
-          key: key,
-          type: QUESTION_TYPES.COMBINATION,
-          subtype: 'notes',
-          denomination: note,
-          target: target,
-          questionText: `How many ₹${note} notes make ₹${target}?`,
-          correctAnswer: Math.floor(target / note)
-        };
-      }
-    }
+    // Removed generateCombinationQuestion and generateScenarioQuestion
 
     function generateSubtractionQuestion(){
       let initial = randomInt(50, 500);
@@ -701,39 +664,6 @@
         total: total,
         questionText: `What is the sum of ${amounts.join(' + ')}?`,
         correctAnswer: total
-      };
-    }
-
-    function generateScenarioQuestion(){
-      const items = [
-        {name: 'milk bottle', cost: randomInt(20, 100)},
-        {name: 'cookie', cost: randomInt(5, 50)},
-        {name: 'toy', cost: randomInt(30, 200)},
-        {name: 'notebook', cost: randomInt(10, 80)},
-        {name: 'pen', cost: randomInt(2, 30)},
-        {name: 'chocolate', cost: randomInt(5, 60)},
-        {name: 'juice', cost: randomInt(15, 120)},
-        {name: 'eraser', cost: randomInt(1, 25)},
-        {name: 'pencil', cost: randomInt(2, 40)},
-        {name: 'marker', cost: randomInt(3, 50)}
-      ];
-      let item = randomChoice(items);
-      let paymentOption = randomChoice(['notes', 'coins']);
-      let denominationOptions = paymentOption === 'notes' ? [10, 20, 50, 100] : [1, 2, 5, 10];
-      let denomination = randomChoice(denominationOptions);
-      let required = Math.ceil(item.cost / denomination);
-      let totalPayment = required * denomination;
-      let key = `scenario_${item.name}_${item.cost}_${denomination}`;
-      return {
-        key: key,
-        type: QUESTION_TYPES.SCENARIO,
-        item: item.name,
-        cost: item.cost,
-        denomination: denomination,
-        required: required,
-        totalPayment: totalPayment,
-        questionText: `A ${item.name} costs ₹${item.cost}. You want to buy it using ₹${denomination}. How many ₹${denomination} notes or coins do you need?`,
-        correctAnswer: required
       };
     }
 
@@ -797,84 +727,33 @@
       const moneyInputArea = document.getElementById("money-input-area");
       moneyInputArea.innerHTML = "";
 
-      if(question.type === QUESTION_TYPES.COMBINATION || question.type === QUESTION_TYPES.COMBINATION_COMPLEX){
-        if(question.type === QUESTION_TYPES.COMBINATION){
-          const section = document.createElement("div");
-          section.className = "money-input";
+      if(question.type === QUESTION_TYPES.COMBINATION_COMPLEX){
+        const dragContainer = document.createElement("div");
+        dragContainer.className = "drag-container";
 
-          if(question.subtype === 'coins'){
-            const coinSection = document.createElement("div");
-            coinSection.className = "money-section";
-            coinSection.innerHTML = `<h3>₹${question.denomination} Coins</h3>`;
-            
-            const inputBox = document.createElement("input");
-            inputBox.type = "number";
-            inputBox.min = "0";
-            inputBox.value = "0";
-            inputBox.placeholder="0";
-            inputBox.id = `coin-${question.denomination}-input`;
-            inputBox.oninput = (e) => {
-              let val = parseInt(e.target.value);
-              if(isNaN(val) || val < 0){
-                val = 0;
-              }
-              selectedCoins[question.denomination] = val;
-            };
+        coins.concat(notes).forEach(denomination => {
+          const dragItem = document.createElement("div");
+          dragItem.className = "drag-item";
+          dragItem.draggable = true;
+          dragItem.textContent = `₹${denomination}`;
+          dragItem.dataset.value = denomination;
+          dragItem.addEventListener('dragstart', dragStart);
+          dragContainer.appendChild(dragItem);
+        });
 
-            coinSection.appendChild(inputBox);
-            section.appendChild(coinSection);
-          } else {
-            const noteSection = document.createElement("div");
-            noteSection.className = "money-section";
-            noteSection.innerHTML = `<h3>₹${question.denomination} Notes</h3>`;
-            
-            const inputBox = document.createElement("input");
-            inputBox.type = "number";
-            inputBox.min = "0";
-            inputBox.value = "0";
-            inputBox.placeholder="0";
-            inputBox.id = `note-${question.denomination}-input`;
-            inputBox.oninput = (e) => {
-              let val = parseInt(e.target.value);
-              if(isNaN(val) || val < 0){
-                val = 0;
-              }
-              selectedNotes[question.denomination] = val;
-            };
+        const dropZone = document.createElement("div");
+        dropZone.className = "drop-zone";
+        dropZone.id = "drop-zone";
+        dropZone.textContent = `Drag here to create ₹${question.target}`;
+        dropZone.addEventListener('dragover', dragOver);
+        dropZone.addEventListener('drop', dropHandler);
 
-            noteSection.appendChild(inputBox);
-            section.appendChild(noteSection);
-          }
+        moneyInputArea.appendChild(dragContainer);
+        moneyInputArea.appendChild(dropZone);
 
-          moneyInputArea.appendChild(section);
-        } else if(question.type === QUESTION_TYPES.COMBINATION_COMPLEX){
-          const dragContainer = document.createElement("div");
-          dragContainer.className = "drag-container";
-
-          coins.concat(notes).forEach(denomination => {
-            const dragItem = document.createElement("div");
-            dragItem.className = "drag-item";
-            dragItem.draggable = true;
-            dragItem.textContent = `₹${denomination}`;
-            dragItem.dataset.value = denomination;
-            dragItem.addEventListener('dragstart', dragStart);
-            dragContainer.appendChild(dragItem);
-          });
-
-          const dropZone = document.createElement("div");
-          dropZone.className = "drop-zone";
-          dropZone.id = "drop-zone";
-          dropZone.textContent = `Drag here to create ₹${question.target}`;
-          dropZone.addEventListener('dragover', dragOver);
-          dropZone.addEventListener('drop', dropHandler);
-
-          moneyInputArea.appendChild(dragContainer);
-          moneyInputArea.appendChild(dropZone);
-
-          // Initialize dragged values
-          selectedCoins = {};
-          selectedNotes = {};
-        }
+        // Initialize dragged values
+        selectedCoins = {};
+        selectedNotes = {};
       } else if(question.type === QUESTION_TYPES.SUBTRACTION){
         // For subtraction, input the remaining amount
         const inputGroup = document.createElement("div");
@@ -900,29 +779,6 @@
 
         inputGroup.appendChild(input);
         moneyInputArea.appendChild(inputGroup);
-      } else if(question.type === QUESTION_TYPES.SCENARIO){
-        const optionsDiv = document.createElement("div");
-        optionsDiv.className = "options";
-
-        let correctOption = question.correctAnswer;
-        let incorrectOptions = generateIncorrectOptions(correctOption, 4);
-        const options = shuffleArray([correctOption, ...incorrectOptions]);
-
-        options.forEach(option => {
-          const optionLabel = document.createElement("label");
-          optionLabel.className = "option-label";
-
-          const optionInput = document.createElement("input");
-          optionInput.type = "radio";
-          optionInput.name = "option";
-          optionInput.value = option;
-
-          optionLabel.appendChild(optionInput);
-          optionLabel.appendChild(document.createTextNode(option));
-          optionsDiv.appendChild(optionLabel);
-        });
-
-        moneyInputArea.appendChild(optionsDiv);
       } else if(question.type === QUESTION_TYPES.CONVERSION){
         const inputGroup = document.createElement("div");
         inputGroup.className = "answer-input";
@@ -1086,33 +942,14 @@
       let userAnswer = "";
 
       try {
-        if(q.type === QUESTION_TYPES.COMBINATION){
-          if(q.subtype === 'coins'){
-            let count = parseInt(document.getElementById(`coin-${q.denomination}-input`).value.trim());
-            correct = (count === q.correctAnswer);
-            userAnswer = count;
-          } else {
-            let count = parseInt(document.getElementById(`note-${q.denomination}-input`).value.trim());
-            correct = (count === q.correctAnswer);
-            userAnswer = count;
-          }
+        if(q.type === QUESTION_TYPES.ADDITION){
+          let answer = parseInt(document.getElementById("addition-answer").value.trim());
+          correct = (answer === q.correctAnswer);
+          userAnswer = answer;
         } else if(q.type === QUESTION_TYPES.SUBTRACTION){
           let answer = parseInt(document.getElementById("subtraction-answer").value.trim());
           correct = (answer === q.correctAnswer);
           userAnswer = answer;
-        } else if(q.type === QUESTION_TYPES.ADDITION){
-          let answer = parseInt(document.getElementById("addition-answer").value.trim());
-          correct = (answer === q.correctAnswer);
-          userAnswer = answer;
-        } else if(q.type === QUESTION_TYPES.SCENARIO){
-          let selectedOption = document.querySelector('input[name="option"]:checked');
-          if(selectedOption){
-            userAnswer = parseInt(selectedOption.value);
-            correct = (userAnswer === q.correctAnswer);
-          } else {
-            // No option selected
-            correct = false;
-          }
         } else if(q.type === QUESTION_TYPES.CONVERSION){
           let answer = parseFloat(document.getElementById("conversion-answer").value.trim());
           if(q.conversionType === 'toPaise'){
@@ -1165,8 +1002,6 @@
           explanationEl.textContent = `The correct answer was: ${q.correctAnswer}.`;
         } else if(q.type === QUESTION_TYPES.SUBTRACTION){
           explanationEl.textContent = `The correct answer was: ${q.correctAnswer}.`;
-        } else if(q.type === QUESTION_TYPES.SCENARIO){
-          explanationEl.textContent = `The correct answer was: ${q.correctAnswer} ${q.denomination === 1 ? 'note' : 'notes'}.`;
         }
       }
 
